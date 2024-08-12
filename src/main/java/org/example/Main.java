@@ -24,33 +24,35 @@ public class Main {
 
         //Task 3
 //        CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> "Hello");
-//        CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> "World!");
+//        CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() ->
+//        {
+//            Thread.sleep(5000);
+//            return "World!";
+//        });
 
 
-        CompletableFuture<Void> futureNum1 = CompletableFuture.runAsync(() -> {
+        CompletableFuture<String> futureNum1 = CompletableFuture.supplyAsync(() -> {
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException ie) {
                 ie.printStackTrace();
             }
-            System.out.println("Hello");
+            return "Hello";
         });
 
-        CompletableFuture<Void> futureNum2 = CompletableFuture.runAsync(() -> {
+        CompletableFuture<String> futureNum2 = CompletableFuture.supplyAsync(() -> {
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException ie) {
                 ie.printStackTrace();
             }
-            System.out.println("World!");
+           return "World!";
         });
 
-        futureNum2.join();
+        CompletableFuture<String> combinedFuture = futureNum1.thenCombine(futureNum2, (Hello, World) -> Hello + ", " + World);
+        String result = combinedFuture.join();
 
-
-
-
-
+        System.out.println(result);
 
     }
 }
