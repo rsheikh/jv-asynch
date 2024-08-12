@@ -2,6 +2,7 @@ package org.example;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -30,10 +31,10 @@ public class Main {
 //            return "World!";
 //        });
 
-
+        //Task 4
         CompletableFuture<String> futureNum1 = CompletableFuture.supplyAsync(() -> {
             try {
-                Thread.sleep(3000);
+                Thread.sleep(8000);
             } catch (InterruptedException ie) {
                 ie.printStackTrace();
             }
@@ -42,7 +43,7 @@ public class Main {
 
         CompletableFuture<String> futureNum2 = CompletableFuture.supplyAsync(() -> {
             try {
-                Thread.sleep(5000);
+                Thread.sleep(10000);
             } catch (InterruptedException ie) {
                 ie.printStackTrace();
             }
@@ -50,9 +51,13 @@ public class Main {
         });
 
         CompletableFuture<String> combinedFuture = futureNum1.thenCombine(futureNum2, (Hello, World) -> Hello + ", " + World);
-        String result = combinedFuture.join();
-
-        System.out.println(result);
+        combinedFuture = combinedFuture.orTimeout(10000, TimeUnit.MILLISECONDS).exceptionally(ex -> {
+            if(ex instanceof TimeoutException) {
+                return "Combined Time exceeds 10 seconds";
+           }
+            return "An error has has occurred";
+        });
+        System.out.println(combinedFuture.get());
 
     }
 }
